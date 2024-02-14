@@ -13,15 +13,15 @@ class Budget extends Model
         'sum',
     ];
 
-    protected $primaryKey = 'budgetID';
+    protected $primaryKey = 'budget_id';
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'userID');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function incomes()
     {
-        return $this->hasMany(Income::class, 'budgetID');
+        return $this->hasMany(Income::class, 'budget_id');
     }
 }

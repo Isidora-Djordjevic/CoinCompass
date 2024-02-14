@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'username',
+        'email_verified_at',
     ];
 
     /**
@@ -34,7 +35,7 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected $primaryKey = 'userID';
+    protected $primaryKey = 'user_id';
 
     /**
      * The attributes that should be cast.
@@ -48,11 +49,11 @@ class User extends Authenticatable
 
     public function budgets()
     {
-        return $this->hasOne(Budget::class, 'userID');
+        return $this->hasOne(Budget::class, 'user_id');
     }
 
     public function incomes()
     {
-        return $this->hasMany(Income::class, 'userID');
+        return $this->hasMany(Income::class, 'user_id');
     }
 }

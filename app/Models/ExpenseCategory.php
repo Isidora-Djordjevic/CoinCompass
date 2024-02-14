@@ -16,6 +16,6 @@ class ExpenseCategory extends Model
     // Dodavanje relacije ka Expense modelu
     public function expenses()
     {
-        return $this->hasMany(Expense::class, 'categoryID');
+        return $this->hasMany(Expense::class, 'category_id');
     }
 }

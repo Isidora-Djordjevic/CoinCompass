@@ -15,15 +15,15 @@ class Income extends Model
         'incomeDate',
     ];
 
-    protected $primaryKey = 'incomeID';
+    protected $primaryKey = 'income_id';
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'userID');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function budget()
     {
-        return $this->belongsTo(Budget::class, 'budgetID');
+        return $this->belongsTo(Budget::class, 'budget_id');
     }
 }
