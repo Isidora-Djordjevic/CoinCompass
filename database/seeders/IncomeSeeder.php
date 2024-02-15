@@ -13,6 +13,6 @@ class IncomeSeeder extends Seeder
      */
     public function run(): void
     {
-        Income::factory()->count(25)->create();
+        Income::factory()->create();
     }
 }

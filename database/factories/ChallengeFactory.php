@@ -17,11 +17,13 @@ class ChallengeFactory extends Factory
      */
     public function definition(): array
     {
+        $challengeNames = ['Dan bez trosenja', 'Skupi 15k na racunu', 'Potrosi 5k'];
         return [
-            'challengeName'=>fake()->title(),
+            'user_id'=>User::factory(),
+            'challengeName'=>$this->faker->randomElement($challengeNames),
             'startDate'=>$this->faker->dateTimeBetween('-1 month', 'now'),
             'endDate'=>$this->faker->dateTimeBetween('now', '+1 month'),
-            'user_id'=>User::factory(),
+            
         ];
     }
 }

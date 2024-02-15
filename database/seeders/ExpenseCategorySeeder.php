@@ -22,7 +22,6 @@ class ExpenseCategorySeeder extends Seeder
             ['categoryName' => 'Gorivo'],
             ['categoryName' => 'Soping'],
         )
-        ->hasExpenses(3)
         ->create();
     }
 }

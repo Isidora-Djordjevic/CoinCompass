@@ -56,4 +56,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Income::class, 'user_id');
     }
+
+    public function challenges()
+    {
+        return $this->hasMany(Challenge::class, 'user_id');
+    }
 }

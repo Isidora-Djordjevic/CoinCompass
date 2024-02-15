@@ -17,8 +17,9 @@ class ExpenseFactory extends Factory
      */
     public function definition(): array
     {
+        $expenseNames = ['Restoran', 'Klub', 'Haljina','Cipele','Odeca','Gorivo 10l','Racun za struju'];
         return [
-           'expenseName'=>fake()->title(),
+           'expenseName'=> $this->faker->randomElement($expenseNames),
            'expenseDate'=>$this->faker->dateTimeBetween('-1 month', 'now'),
            'expenseValue'=>$this->faker->randomFloat(2, 100, 10000),
            'budget_id'=>Budget::factory(),

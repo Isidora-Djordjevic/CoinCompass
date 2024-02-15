@@ -27,14 +27,36 @@ class DatabaseSeeder extends Seeder
         
 
          $this->call([
+
+            ExpenseCategorySeeder::class,
             UserSeeder::class,
-            ExpenseCategorySeeder::class,
-            /*
-            ChallengeSeeder::class,
-            ExpenseCategorySeeder::class,
-            ExpenseSeeder::class,
-            
-            */
+
         ]);
+
+        $user = User::factory()->create();
+        Challenge::factory(3)->create([
+            'user_id'=>$user->user_id,
+        ]);
+        Budget::factory()->create([
+            'user_id'=>$user->user_id,
+        ]);
+
+        $budgets = Budget::all();
+        $categories=ExpenseCategory::all();
+        $users = User::all();
+
+        foreach($budgets as $budget){
+            Expense::factory(3)->create([
+                'budget_id'=>$budget->id,
+                'category_id'=>$categories->random()->id,
+            ]);
+        }
+
+        foreach($budgets as $budget){
+            Income::factory(3)->create([
+                'budget_id'=>$budget->id,
+                'user_id'=>$users->random()->id,
+            ]);
+        }
     }
 }

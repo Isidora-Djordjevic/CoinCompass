@@ -14,6 +14,6 @@ class ChallengeSeeder extends Seeder
      */
     public function run(): void
     {
-        Challenge::factory()->count(3)->create();
+        Challenge::factory(3)->create();
     }
 }

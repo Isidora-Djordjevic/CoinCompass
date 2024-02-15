@@ -18,9 +18,10 @@ class IncomeFactory extends Factory
      */
     public function definition(): array
     {
+        $incomeNames = ['Plata', 'Rodjendan', 'Povracaj pdv-a','Nasao na ulici'];
         return [
             'incomeDate'=>$this->faker->dateTimeBetween('-1 month', 'now'),
-            'incomeName'=>fake()->title(),
+            'incomeName'=>$this->faker->randomElement($incomeNames),
             'incomeValue'=>$this->faker->randomFloat(2, 100, 10000),
             'user_id'=>User::factory(),
             'budget_id'=>Budget::factory(),
