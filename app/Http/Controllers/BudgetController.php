@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Response;
 use App\Models\Budget;
 use Illuminate\Http\Request;
 use App\Http\Resources\BudgetCollection;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+
 
 class BudgetController extends Controller
 {
@@ -33,7 +36,23 @@ class BudgetController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'sum' => 'required|numeric',
+            
+        ]);
+
+        if ($validator->fails()) {
+            return Response::json(['errors' => $validator->errors()], 400);
+        }
+
+        
+        $budget = Budget::create([
+            'sum' => $request->input('sum'),
+            'user_id' => Auth::user()->id, 
+            
+        ]);
+
+        return Response::json(['message' => 'Budget created successfully', 'data' => $budget], 201);
     }
 
     /**
@@ -61,7 +80,19 @@ class BudgetController extends Controller
      */
     public function update(Request $request, Budget $budget)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'sum' => 'required|numeric',
+        ]);
+
+        if ($validator->fails()) {
+            return Response::json(['errors' => $validator->errors()], 400);
+        }
+
+        $budget->update([
+            'sum' => $request->input('sum'),
+        ]);
+
+        return Response::json(['message' => 'Budget updated successfully', 'data' => $budget], 200);
     }
 
     /**
@@ -69,6 +100,8 @@ class BudgetController extends Controller
      */
     public function destroy(Budget $budget)
     {
-        //
+        $budget->delete();
+
+    return Response::json(['message' => 'Budget successfully deleted'], 200);
     }
 }
