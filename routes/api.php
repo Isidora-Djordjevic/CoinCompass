@@ -46,6 +46,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/users/{id}/expenses', [App\Http\Controllers\UserExpensesController::class ,'index'])->name('users.expenses.index');
     Route::get('/users/{id}/incomes', [App\Http\Controllers\UserIncomeController::class ,'index'])->name('users.incomes.index');
     // API route for logout user
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/logout', [App\Http\Controllers\API\AuthController::class, 'logout']);
 });
     

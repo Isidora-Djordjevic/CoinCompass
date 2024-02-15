@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Response;
 use App\Models\User;
+use App\Models\Budget;
 
 class AuthController extends Controller
 {
@@ -32,6 +33,9 @@ class AuthController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
+        $budget = new Budget(['sum' => 0]); // Dodavanje pocetnog budzeta automatski
+        $user->budgets()->save($budget);
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return Response::json(['data'=> $user, 'access_token'=> $token, 'token_type'=>'Bearer', ]);
@@ -47,5 +51,12 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return Response::json(['message' => 'Zdravo ' .$user->name. ', pazi kako trosis!', 'acces_token'=> $token, 'token_type'=>'Bearer', ]);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->tokens()->delete();
+
+        return Response::json(['message' => 'Successfully logged out']);
     }
 }
