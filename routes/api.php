@@ -9,6 +9,8 @@ use App\Http\Controllers\ExpenseCategoryController;
 use App\Http\Controllers\UserChallengeController;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\ExpenseCategoryResource;
+use App\Http\Controllers\UserExpensesontroller;
+use App\Http\Controllers\UserIncomeController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,3 +30,5 @@ Route::resource('budgets', App\Http\Controllers\BudgetController::class);
 Route::resource('users', App\Http\Controllers\UserController::class);
 Route::resource('expense_categories', App\Http\Controllers\ExpenseCategoryController::class);
 Route::get('/users/{id}/challenges', [App\Http\Controllers\UserChallengeController::class ,'index'])->name('users.challenges.index');
+Route::get('/users/{id}/expenses', [App\Http\Controllers\UserExpensesController::class ,'index'])->name('users.expenses.index');
+Route::get('/users/{id}/incomes', [App\Http\Controllers\UserIncomeController::class ,'index'])->name('users.incomes.index');
