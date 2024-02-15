@@ -13,7 +13,6 @@ class Budget extends Model
         'sum',
     ];
 
-    protected $primaryKey = 'budget_id';
 
     public function user()
     {
