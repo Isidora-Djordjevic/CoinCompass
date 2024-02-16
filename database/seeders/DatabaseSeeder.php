@@ -35,10 +35,10 @@ class DatabaseSeeder extends Seeder
 
         $user = User::factory()->create();
         Challenge::factory(3)->create([
-            'user_id'=>$user->user_id,
+            'user_id'=>$user->id,
         ]);
         Budget::factory()->create([
-            'user_id'=>$user->user_id,
+            'user_id'=>$user->id,
         ]);
 
         $budgets = Budget::all();

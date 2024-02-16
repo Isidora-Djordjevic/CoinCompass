@@ -9,12 +9,12 @@ use App\Http\Resources\UserExpensesCollection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Carbon;
 
 class UserExpensesController extends Controller
 {
-    public function index(){
+    public function index(Request $request){
         $user = Auth::user();
-    
         $budget = $user->budget;
     
         if (is_null($budget)) {
@@ -22,7 +22,14 @@ class UserExpensesController extends Controller
         }
     
         $budget_id = $budget->id;
-        $expenses = Expense::where('budget_id', $budget_id)->get();
+        $expensesQuery = Expense::where('budget_id', $budget_id);
+
+        // Dodaj logiku za filtriranje prema kategoriji
+        if ($request->has('category_id')) {
+            $expensesQuery->where('category_id', $request->category_id);
+        }
+    
+        $expenses = $expensesQuery->paginate(5);
     
         if ($expenses->isEmpty()) {
             return Response::json(['Expense not found'], 404);
@@ -34,26 +41,33 @@ class UserExpensesController extends Controller
     public function store(Request $request)
 {
     $validator = Validator::make($request->all(), [
-        'expenseDate' => 'required|date',
+        //'expenseDate' => 'required|date',
         'expenseName' => 'required|string|max:255',
         'expenseValue' => 'required|numeric',
-        'budget_id' => 'required|exists:budgets,id',
+        'category_id' => 'required|exists:expense_categories,id'
+        //'budget_id' => 'required|exists:budgets,id',
     ]);
 
     if ($validator->fails()) {
         return Response::json(['errors' => $validator->errors()], 400);
     }
 
+    $user = Auth::user();
+    $budget = $user->budget;
+
+    if (!$budget) {
+        return Response::json(['message' => 'Budget not found for the user'], 404);
+    }
+
     $expense = Expense::create([
-        'expenseDate' => $request->expenseDate,
+        'expenseDate' => now(),
         'expenseName' => $request->expenseName,
         'expenseValue' => $request->expenseValue,
-        'budget_id' => $request->budget_id,
+        'budget_id' => $budget->id,
         'category_id' => $request->category_id,
     ]);
 
 
-    $budget = Budget::find($request->budget_id);
     $budget->sum -= $request->expenseValue; 
     $budget->save();
 

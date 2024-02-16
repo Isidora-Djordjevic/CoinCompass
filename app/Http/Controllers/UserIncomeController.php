@@ -12,26 +12,45 @@ use Illuminate\Support\Facades\Response;
 
 class UserIncomeController extends Controller
 {
-    public function index(){
-
+    public function index(Request $request)
+    {
         $user = Auth::user();
-        $incomes = Income::where('user_id', $user->id)->get();
+        $incomes = Income::where('user_id', $user->id);
 
+        // Ako postoji parametar za pretragu po nazivu, primenjujemo ga
+        if ($request->has('incomeName')) {
+            $incomes->where('incomeName', 'like', '%' . $request->incomeName . '%');
+        }
+
+        // Ako postoji parametar za pretragu po datumu, primenjujemo ga
+        if ($request->has('incomeDate')) {
+            $incomes->whereDate('incomeDate', $request->incomeDate);
+        }
+
+        
+        $incomes = $incomes->paginate();
+        
+
+        // Proveravamo da li su prihodi pronađeni
         if ($incomes->isEmpty()) {
-        return Response::json(['Incomes not found'], 404);
-    }
+            return Response::json(['Incomes not found'], 404);
+        }
 
+        // Vraćamo prihode kao JSON
         return new UserIncomeCollection($incomes);
     }
 
 
     public function store(Request $request)
 {
+    $user = Auth::user();
+    $budget = $user->budget;
+
     $validator = Validator::make($request->all(), [
-        'incomeDate' => 'required|date',
+        //'incomeDate' => 'required|date',
         'incomeName' => 'required|string|max:255',
         'incomeValue' => 'required|numeric',
-        'budget_id' => 'required|exists:budgets,id',
+        //'budget_id' => 'required|exists:budgets,id',
     ]);
 
     if ($validator->fails()) {
@@ -39,14 +58,13 @@ class UserIncomeController extends Controller
     }
 
     $income = Income::create([
-        'incomeDate' => $request->incomeDate,
+        'incomeDate' => now(),
         'incomeName' => $request->incomeName,
         'incomeValue' => $request->incomeValue,
-        'budget_id' => $request->budget_id,
+        'budget_id' => $budget->id,
         'user_id' => auth()->id(),  
     ]);
 
-    $budget = Budget::find($request->budget_id);
     $budget->sum += $request->incomeValue;
     $budget->save();
 
