@@ -12,6 +12,7 @@ use App\Http\Resources\ExpenseCategoryResource;
 use App\Http\Controllers\UserExpensesontroller;
 use App\Http\Controllers\UserIncomeController;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\ResetPasswordController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -33,6 +34,12 @@ Route::resource('users', App\Http\Controllers\UserController::class);
 Route::resource('expense_categories', App\Http\Controllers\ExpenseCategoryController::class);
 Route::post('/register', [App\Http\Controllers\API\AuthController::class, 'register']);
 Route::post('/login', [App\Http\Controllers\API\AuthController::class, 'login']);
+
+//forgot password opcija
+Route::middleware('api')->group(function () {
+    Route::get('/password/reset', [App\Http\Controllers\ResetPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('/password/reset', [App\Http\Controllers\ResetPasswordController::class, 'reset']);
+});
 
 //dozvoljen pristup samo autentifikovanim
 Route::group(['middleware' => ['auth:sanctum']], function () {
