@@ -15,10 +15,10 @@ class UserIncomeResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->resource->id,
             'incomeName' => $this->resource->incomeName,
             'incomeDate' => $this->resource->incomeDate,
             'incomeValue' => $this->resource->incomeValue,
+            'incomeCategory' => new IncomeCategoryResource($this->resource->category),
             'user' => new UserResource($this->resource->user),
         ];
     }

@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'username',
         'email_verified_at',
+        'budget',
     ];
 
     /**
@@ -46,19 +47,14 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function budgets()
-    {
-        return $this->hasOne(Budget::class, 'user_id');
-    }
-
     public function incomes()
     {
-        return $this->hasMany(Income::class, 'user_id');
+        return $this->hasMany(Income::class);
     }
 
     public function challenges()
     {
-        return $this->hasMany(Challenge::class, 'user_id');
+        return $this->hasMany(Challenge::class);
     }
 
     public function expenses()

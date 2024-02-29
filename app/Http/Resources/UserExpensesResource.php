@@ -22,20 +22,13 @@ class UserExpensesResource extends JsonResource
         return []; 
     }
 
-    $budget = $expense->budget;
-
-    if (!$budget) {
-        return []; 
-    }
-
-    $user = $budget->user;
+    $user = $expense->user;
 
     if (!$user) {
         return []; 
     }
 
     return [
-        'id' => $this->resource->id,
         'expenseName' => $this->resource->expenseName,
         'expenseDate' => $this->resource->expenseDate,
         'expenseValue' => $this->resource->expenseValue,

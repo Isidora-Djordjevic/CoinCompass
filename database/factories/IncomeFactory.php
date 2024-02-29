@@ -24,7 +24,6 @@ class IncomeFactory extends Factory
             'incomeName'=>$this->faker->randomElement($incomeNames),
             'incomeValue'=>$this->faker->randomFloat(2, 100, 10000),
             'user_id'=>User::factory(),
-            'budget_id'=>Budget::factory(),
         ];
     }
 }

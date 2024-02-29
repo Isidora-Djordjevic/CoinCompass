@@ -3,12 +3,11 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\User;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Budget>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\IncomeCategory>
  */
-class BudgetFactory extends Factory
+class IncomeCategoryFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,8 +17,7 @@ class BudgetFactory extends Factory
     public function definition(): array
     {
         return [
-            'sum'=>$this->faker->randomFloat(2, 100, 10000),
-            'user_id'=>User::factory(),
+            'categoryName'=>fake()->title(),
         ];
     }
 }

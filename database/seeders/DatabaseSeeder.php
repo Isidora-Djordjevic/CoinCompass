@@ -10,6 +10,7 @@ use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\Income;
 use App\Models\Challenge;
+use App\Models\IncomeCategory;
 
 class DatabaseSeeder extends Seeder
 {
@@ -29,33 +30,25 @@ class DatabaseSeeder extends Seeder
          $this->call([
 
             ExpenseCategorySeeder::class,
+            IncomeCategorySeeder::class,
             UserSeeder::class,
-
         ]);
 
-        $user = User::factory()->create();
-        Challenge::factory(3)->create([
-            'user_id'=>$user->id,
-        ]);
-        Budget::factory()->create([
-            'user_id'=>$user->id,
-        ]);
-
-        $budgets = Budget::all();
-        $categories=ExpenseCategory::all();
         $users = User::all();
+        $expcategories=ExpenseCategory::all();
+        $inccategories=IncomeCategory::all();
 
-        foreach($budgets as $budget){
-            Expense::factory(3)->create([
-                'budget_id'=>$budget->id,
-                'category_id'=>$categories->random()->id,
+        foreach($users as $user){
+            Challenge::factory(2)->create([
+                'user_id'=>$user->id,
             ]);
-        }
-
-        foreach($budgets as $budget){
             Income::factory(3)->create([
-                'budget_id'=>$budget->id,
-                'user_id'=>$users->random()->id,
+                'user_id'=>$user->id,
+                'category_id'=>$inccategories->random()->id,
+            ]);
+            Expense::factory(4)->create([
+                'user_id'=>$user->id,
+                'category_id'=>$expcategories->random()->id,
             ]);
         }
     }

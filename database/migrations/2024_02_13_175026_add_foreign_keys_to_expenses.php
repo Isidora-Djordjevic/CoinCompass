@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('expenses', function (Blueprint $table) {
-            $table->foreignId('budget_id')->constrained('budgets');
+           //$table->foreignId('budget_id')->constrained('budgets');
             $table->foreignId('category_id')->constrained('expense_categories');
+            $table->foreignId('user_id')->constrained('users');
         });
     }
 
@@ -23,9 +24,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('expenses', function (Blueprint $table) {
-            $table->dropForeign(['budget_id']);
+            $table->dropForeign(['user_id']);
             $table->dropForeign(['category_id']);
-            $table->dropColumn(['budget_id', 'category_id']);
+            $table->dropColumn(['category_id','user_id']);
         });
     }
 };
