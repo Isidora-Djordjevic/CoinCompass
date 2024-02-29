@@ -51,5 +51,17 @@ class DatabaseSeeder extends Seeder
                 'category_id'=>$expcategories->random()->id,
             ]);
         }
+
+        foreach ($users as $user) {
+            $incomesSum = Income::where('user_id', $user->id)->sum('incomeValue');
+            $expensesSum = Expense::where('user_id', $user->id)->sum('expenseValue');
+            
+            $sum = $incomesSum - $expensesSum;
+        
+            // Ažurirajte polje "budget" u modelu korisnika
+            $user->budget = $sum;
+            $user->save();
+        }
+        
     }
 }
