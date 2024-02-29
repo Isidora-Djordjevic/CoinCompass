@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Response;
 use App\Models\User;
-use App\Models\Budget;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -30,11 +30,11 @@ class AuthController extends Controller
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
+            'budget' => 0.0,
+            'email_verified_at' => now(),
+            'remember_token' => Str::random(10),
         ]);
-
-        $budget = new Budget(['sum' => 0]); // Dodavanje pocetnog budzeta automatski
-        $user->budgets()->save($budget);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 

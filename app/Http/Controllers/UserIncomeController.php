@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Income;
 use App\Http\Resources\UserIncomeCollection;
+use App\Models\IncomeCategory;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\DB;
 
 
 class UserIncomeController extends Controller
@@ -18,8 +20,12 @@ class UserIncomeController extends Controller
         $incomes = Income::where('user_id', $user->id);
 
         // Ako postoji parametar za pretragu po nazivu, primenjujemo ga
-        if ($request->has('incomeName')) {
-            $incomes->where('incomeName', 'like', '%' . $request->incomeName . '%');
+        if ($request->has('categoryName')) {
+            $categoryName = $request->categoryName;
+            $incomeCat = IncomeCategory::find($categoryName);
+            if ($incomeCat) {
+                $incomes->where('category_id', $incomeCat->id);
+            }
         }
 
         // Ako postoji parametar za pretragu po datumu, primenjujemo ga
@@ -28,7 +34,7 @@ class UserIncomeController extends Controller
         }
 
         
-        $incomes = $incomes->paginate();
+        $incomes = $incomes->paginate(5);
         
 
         // Proveravamo da li su prihodi pronađeni
@@ -44,12 +50,12 @@ class UserIncomeController extends Controller
     public function store(Request $request)
 {
     $user = Auth::user();
-    $budget = $user->budget;
 
     $validator = Validator::make($request->all(), [
         //'incomeDate' => 'required|date',
         'incomeName' => 'required|string|max:255',
         'incomeValue' => 'required|numeric',
+        'category_id' => 'required|exists:income_categories,id',
         //'budget_id' => 'required|exists:budgets,id',
     ]);
 
@@ -61,12 +67,14 @@ class UserIncomeController extends Controller
         'incomeDate' => now(),
         'incomeName' => $request->incomeName,
         'incomeValue' => $request->incomeValue,
-        'budget_id' => $budget->id,
-        'user_id' => auth()->id(),  
+        'user_id' => $user->id,  
+        'category_id' => $request->category_id,
     ]);
 
-    $budget->sum += $request->incomeValue;
-    $budget->save();
+    //print($income);
+    $affected = DB::table('users')
+              ->where('id', $user->id)
+              ->increment('budget', $request->incomeValue);
 
     return Response::json(['data' => $income, 'message' => 'Income successfully added'], 201);
 }

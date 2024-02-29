@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Response;
 use App\Http\Resources\ExpenseCategoryCollection;
 use App\Http\Resources\ExpenseCategoryResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ExpenseCategoryController extends Controller
 {
@@ -22,17 +23,22 @@ class ExpenseCategoryController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'categoryName' => 'required|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return Response::json(['errors' => $validator->errors()], 400);
+        }
+
+        $expenseCategory = ExpenseCategory::create([
+            'categoryName' => $request->categoryName,
+        ]);
+
+
+        return Response::json(['data' => $expenseCategory, 'message' => 'Expense category successfully added'], 201);
     }
 
     /**

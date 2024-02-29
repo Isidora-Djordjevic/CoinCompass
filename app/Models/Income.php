@@ -13,9 +13,9 @@ class Income extends Model
         'incomeName',
         'incomeValue',
         'incomeDate',
+        'user_id',
+        'category_id',
     ];
-
-    protected $primaryKey = 'income_id';
 
     public function user()
     {

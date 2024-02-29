@@ -3,33 +3,35 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Budget;
+use App\Models\User;
 use App\Models\Expense;
 use App\Http\Resources\UserExpensesCollection;
+use App\Models\ExpenseCategory;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+
+
 
 class UserExpensesController extends Controller
 {
     public function index(Request $request)
     {
         $user = Auth::user();
+        $user_id = $user->id;
 
         print($user);
-        $budget = $user->budget;
 
-        if (is_null($budget)) {
-            return Response::json(['Budget not found'], 404);
-        }
-
-        $budget_id = $budget->id;
-        $expensesQuery = Expense::where('budget_id', $budget_id);
+        $expensesQuery = Expense::where('user_id', $user_id);
 
         // Dodaj logiku za filtriranje prema kategoriji
-        if ($request->has('category_id')) {
-            $expensesQuery->where('category_id', $request->category_id);
+        if ($request->has('categoryName')) {
+            $categoryName = $request->categoryName;
+            $expenseCat = ExpenseCategory::find($categoryName);
+            if ($expenseCat) {
+                $expensesQuery->where('category_id', $expenseCat->id);
+            }
         }
 
         $expenses = $expensesQuery->paginate(5);
@@ -58,21 +60,18 @@ class UserExpensesController extends Controller
         $user = Auth::user();
         $budget = $user->budget;
 
-        if (!$budget) {
-            return Response::json(['message' => 'Budget not found for the user'], 404);
-        }
-
         $expense = Expense::create([
             'expenseDate' => now(),
             'expenseName' => $request->expenseName,
             'expenseValue' => $request->expenseValue,
-            'budget_id' => $budget->id,
             'category_id' => $request->category_id,
+            'user_id' => $user->id,
         ]);
 
 
-        $budget->sum -= $request->expenseValue;
-        $budget->save();
+        $affected = DB::table('users')
+              ->where('id', $user->id)
+              ->decrement('budget', $request->expenseValue);
 
         return Response::json(['data' => $expense, 'message' => 'Expense successfully added'], 201);
     }
