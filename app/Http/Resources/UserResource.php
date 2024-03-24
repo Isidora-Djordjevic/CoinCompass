@@ -24,6 +24,8 @@ class UserResource extends JsonResource
             'name'=>  $this->resource->name,
             'email'=>  $this->resource->email,
             'budget'=> $this->resource->budget,
+            'incomes_sum' => $this->resource->incomes_sum,
+            'expenses_sum'=> $this->resource->expenses_sum,
         ];
     }
 }
