@@ -24,6 +24,8 @@ class User extends Authenticatable
         'username',
         'email_verified_at',
         'budget',
+        'incomes_sum',
+        'expenses_sum',
     ];
 
     /**

@@ -16,10 +16,10 @@ class IncomeCategorySeeder extends Seeder
         IncomeCategory::factory()->count(5)
         ->sequence(
             ['categoryName' => 'Plata'],
-            ['categoryName' => 'Povracaj poreza'],
+            ['categoryName' => 'Poklon'],
             ['categoryName' => 'Rodjendan'],
-            ['categoryName' => 'Loto'],
-            ['categoryName' => 'Dodatan posao'],
+            ['categoryName' => 'Nagrada'],
+            ['categoryName' => 'Moja kategorija'],
         )
         ->create();
     }

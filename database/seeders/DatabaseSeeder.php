@@ -10,6 +10,7 @@ use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\Income;
 use App\Models\Challenge;
+use App\Models\ChallengeCategory;
 use App\Models\IncomeCategory;
 
 class DatabaseSeeder extends Seeder
@@ -32,15 +33,18 @@ class DatabaseSeeder extends Seeder
             ExpenseCategorySeeder::class,
             IncomeCategorySeeder::class,
             UserSeeder::class,
+            ChallengeCategorySeeder::class,
         ]);
 
         $users = User::all();
         $expcategories=ExpenseCategory::all();
         $inccategories=IncomeCategory::all();
+        $challcategories = ChallengeCategory::all();
 
         foreach($users as $user){
             Challenge::factory(2)->create([
                 'user_id'=>$user->id,
+                'challengeCategory'=>$challcategories->random()->id,
             ]);
             Income::factory(3)->create([
                 'user_id'=>$user->id,
@@ -60,6 +64,8 @@ class DatabaseSeeder extends Seeder
         
             // Ažurirajte polje "budget" u modelu korisnika
             $user->budget = $sum;
+            $user->incomes_sum = $incomesSum;
+            $user->expenses_sum = $expensesSum;
             $user->save();
         }
         

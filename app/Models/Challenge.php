@@ -14,10 +14,18 @@ class Challenge extends Model
         'startDate',
         'endDate',
         'userID',
+        'challengeCategory',
+        'status',
+        'value',
     ];
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
+    }
+
+    public function challengeCategory()
+    {
+        return $this->belongsTo(ChallengeCategory::class);
     }
 }

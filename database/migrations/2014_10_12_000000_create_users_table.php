@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->float('budget')->default(0.00);
+            $table->float('incomes_sum')->default(0.00);
+            $table->float('expenses_sum')->default(0.00);
             $table->rememberToken();
             $table->timestamps();
         });

@@ -14,13 +14,19 @@ class ExpenseCategorySeeder extends Seeder
      */
     public function run(): void
     {
-        ExpenseCategory::factory()->count(5)
+        ExpenseCategory::factory()->count(11)
         ->sequence(
-            ['categoryName' => 'Racuni'],
+            ['categoryName' => 'Stanovanje'],
             ['categoryName' => 'Hrana'],
-            ['categoryName' => 'Izlasci'],
-            ['categoryName' => 'Gorivo'],
-            ['categoryName' => 'Soping'],
+            ['categoryName' => 'Transport'],
+            ['categoryName' => 'Odeća'],
+            ['categoryName' => 'Komunalije'],
+            ['categoryName' => 'Zdravlje'],
+            ['categoryName' => 'Sport'],
+            ['categoryName' => 'Pokloni'],
+            ['categoryName' => 'Provodi'],
+            ['categoryName' => 'Hobiji'],
+            ['categoryName' => 'Moja kategorija'],
         )
         ->create();
     }
