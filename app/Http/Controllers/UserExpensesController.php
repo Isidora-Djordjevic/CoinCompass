@@ -21,7 +21,7 @@ class UserExpensesController extends Controller
         $user = Auth::user();
         $user_id = $user->id;
 
-        print($user);
+        //print($user);
 
         $expensesQuery = Expense::where('user_id', $user_id);
 
@@ -72,6 +72,8 @@ class UserExpensesController extends Controller
         $affected = DB::table('users')
               ->where('id', $user->id)
               ->decrement('budget', $request->expenseValue);
+        
+        //POVECAJ EXPENSES KAD DODAS NOVI U USER-U
 
         return Response::json(['data' => $expense, 'message' => 'Expense successfully added'], 201);
     }

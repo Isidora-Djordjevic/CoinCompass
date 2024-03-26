@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
 
         foreach($users as $user){
             Challenge::factory(2)->create([
-                'user_id'=>$user->id,
+                'userID'=>$user->id,
                 'challengeCategory'=>$challcategories->random()->id,
             ]);
             Income::factory(3)->create([

@@ -21,11 +21,11 @@ class Challenge extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'userID');
     }
 
-    public function challengeCategory()
+    public function category()
     {
-        return $this->belongsTo(ChallengeCategory::class);
+        return $this->belongsTo(ChallengeCategory::class, 'challengeCategory');
     }
 }

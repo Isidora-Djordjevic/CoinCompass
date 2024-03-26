@@ -18,12 +18,12 @@ class ChallengeResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'challengeName' => $this->resource->challengeName,
-            'user' => new UserResource($this->resource->user),
+            'user' => new UserResource($this->user),
             'status' => $this->resource->status,
             'value' => $this->resource->value,
             'startDate' => $this->resource->startDate,
             'endDate' => $this->resource->endDate,
-            'challengeCategory' => new ChallengeCategoryResource($this->resource->category),
+            'challengeCategory' => $this->resource->category,
         ];
     }
 }

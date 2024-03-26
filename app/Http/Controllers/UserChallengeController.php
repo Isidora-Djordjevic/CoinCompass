@@ -55,7 +55,7 @@ class UserChallengeController extends Controller
 
         $validator = Validator::make($request->all(), [
             'challengeName' => 'required|string|max:255',
-            'startDate' => 'nullable|date',
+            //'startDate' => 'nullable|date',
             'endDate' => 'nullable|date',
             'value' => 'nullable|numeric',
             'challengeCategory' => 'required|exists:challenge_categories,id',
@@ -73,16 +73,21 @@ class UserChallengeController extends Controller
         }
 
         $user = Auth::user();
+        print($user->id);
+        $category = ChallengeCategory::find($request->challengeCategory);
+        print($category);
 
         $challenge = Challenge::create([
             'startDate' => now(),
             'endDate' =>$request->endDate,
             'challengeName' => $request->challengeName,
             'value' => $request->value,
-            'challengeCategory' => $request->challengeCategory,
+            'challengeCategory' => $category->id,
             'userID' => $user->id,
             'status' => false,
         ]);
+
+        print($challenge);
 
         return new ChallengeResource($challenge);
     }
