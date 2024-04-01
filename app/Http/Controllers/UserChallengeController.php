@@ -19,6 +19,12 @@ class UserChallengeController extends Controller
 
         print($user);
 
+            // Ažuriranje statusa svih izazova
+        $challenges = Challenge::where('userID', $user_id)->get();
+        foreach ($challenges as $challenge) {
+            $this->checkChallengeCompletion($challenge);
+        }
+
         $challengesQuery = ChallengeCategory::where('userID', $user_id);
 
         // Dodaj logiku za filtriranje prema kategoriji
@@ -118,5 +124,44 @@ class UserChallengeController extends Controller
 
         return Response::json(['message' => 'Challenge deleted successfully']);
     }
+
+
+function checkChallengeCompletion(Challenge $challenge)
+{
+    $categoryName = $challenge->category->categoryName;
+    $startDate = $challenge->startDate;
+    $endDate = $challenge->endDate;
+    $challengeAmount = $challenge->value;
+    $userID = $challenge->userID;
+
+    $expenses = \App\Models\Expense::where('user_id', $userID)
+                                    ->whereBetween('expenseDate', [$startDate, $endDate])
+                                    ->sum('expenseValue');
+
+    if ($categoryName === 'Troškovna trka') {
+        // Provera da li je korisnik potrošio dovoljno
+        if ($expenses >= $challengeAmount) {
+            $challenge->status = true;
+            $challenge->save();
+        }
+    } elseif ($categoryName === 'Ograničeni horizont') {
+        // Provera da li je korisnik potrošio više od dozvoljenog
+        if ($expenses <= $challengeAmount) {
+            $challenge->status = true;
+            $challenge->save();
+        }
+    } elseif ($challenge->challengeCategory === 'Finansijski fitnes') {
+        // Provera za kategoriju 'Finansijski fitnes'
+        $totalIncomes = \App\Models\Income::where('user_id', $challenge->user_id)
+                              ->whereBetween('incomeDate', [$challenge->startDate, $challenge->endDate])
+                              ->sum('incomeValue');
+
+        if ($totalIncomes >= $challenge->value) {
+            $challenge->status = true;
+            $challenge->save();
+            //return true; // Ili neki drugi odgovor koji odgovara vašoj logici
+        }
+    }
+}
 
 }
