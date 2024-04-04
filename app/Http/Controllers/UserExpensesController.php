@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Expense;
 use App\Http\Resources\UserExpensesCollection;
+use App\Http\Resources\UserExpensesResource;
 use App\Models\ExpenseCategory;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -72,10 +73,14 @@ class UserExpensesController extends Controller
         $affected = DB::table('users')
               ->where('id', $user->id)
               ->decrement('budget', $request->expenseValue);
+              
+        $affected = DB::table('users')
+            ->where('id', $user->id)
+            ->increment('expenses_sum', $request->expenseValue);
         
         //POVECAJ EXPENSES KAD DODAS NOVI U USER-U
 
-        return Response::json(['data' => $expense, 'message' => 'Expense successfully added'], 201);
+        return Response::json(['expense' => new UserExpensesResource($expense), 'message' => 'Expense successfully added'], 201);
     }
 
     public function destroy(Expense $expense)

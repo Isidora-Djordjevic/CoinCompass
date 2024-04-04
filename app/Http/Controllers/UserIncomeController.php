@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Income;
 use App\Http\Resources\UserIncomeCollection;
+use App\Http\Resources\UserIncomeResource;
 use App\Models\IncomeCategory;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -76,7 +77,11 @@ class UserIncomeController extends Controller
               ->where('id', $user->id)
               ->increment('budget', $request->incomeValue);
 
-    return Response::json(['data' => $income, 'message' => 'Income successfully added'], 201);
+    $affected = DB::table('users')
+            ->where('id', $user->id)
+            ->increment('incomes_sum', $request->incomeValue);
+
+    return Response::json(['income' => new UserIncomeResource($income), 'message' => 'Income successfully added'], 201);
 }
 
 public function destroy(Income $income)

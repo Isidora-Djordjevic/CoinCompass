@@ -17,7 +17,7 @@ class UserChallengeController extends Controller
         $user = Auth::user();
         $user_id = $user->id;
 
-        print($user);
+        //print($user);
 
             // Ažuriranje statusa svih izazova
         $challenges = Challenge::where('userID', $user_id)->get();
@@ -25,24 +25,25 @@ class UserChallengeController extends Controller
             $this->checkChallengeCompletion($challenge);
         }
 
-        $challengesQuery = ChallengeCategory::where('userID', $user_id);
+        //$challengesQuery = ChallengeCategory::where('userID', $user_id);
 
         // Dodaj logiku za filtriranje prema kategoriji
         if ($request->has('categoryName')) {
             $categoryName = $request->categoryName;
             $challengeCat = ChallengeCategory::find($categoryName);
             if ($challengeCat) {
-                $challengesQuery->where('challengeCategory', $challengeCat->id);
+                $challenges->where('challengeCategory', $challengeCat->id);
             }
         }
 
-        $expenses = $challengesQuery->paginate(5);
+        $expenses = $challenges;
 
-        if ($expenses->isEmpty()) {
-            return Response::json(['Expense not found'], 404);
-        }
+       /* if ($expenses->isEmpty()) {
+            return Response::json(['Challenge not found']);
+        }*/
 
-        return new ChallengeCollection($expenses);
+        
+       return new ChallengeCollection($expenses);
     }
 
     public function show($id)

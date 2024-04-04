@@ -33,13 +33,15 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'budget' => 0.0,
+            'expenses_sum' => 0.0,
+            'incomes_sum' => 0.0,
             'email_verified_at' => now(),
             'remember_token' => Str::random(10),
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return Response::json(['data'=> $user, 'access_token'=> $token, 'token_type'=>'Bearer', ]);
+        return Response::json(['user'=> new UserResource($user), 'access_token'=> $token, 'token_type'=>'Bearer', ]);
     }
 
     public function login(Request $request) {
@@ -53,9 +55,9 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
-       print($user->id);
+       //print($user->id);
 
-        return Response::json(['success'=>true,'message' => 'Zdravo ' .$user->name. ', pazi kako trosis!', 'acces_token'=> $token, 'token_type'=>'Bearer', 'user'=>new UserResource($user) ]);
+        return Response::json(['success'=>true,'message' => 'Zdravo, pazi kako trosis!', 'acces_token'=> $token, 'token_type'=>'Bearer', 'user'=>new UserResource($user) ]);
     }
 
     public function logout(Request $request)
