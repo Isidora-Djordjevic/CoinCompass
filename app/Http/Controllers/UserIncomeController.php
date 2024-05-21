@@ -20,6 +20,10 @@ class UserIncomeController extends Controller
         $user = Auth::user();
         $incomes = Income::where('user_id', $user->id);
 
+        if ($incomes->isEmpty()) {
+            return Response::json(['Incomes not found']);
+        }
+
         // Ako postoji parametar za pretragu po nazivu, primenjujemo ga
         if ($request->has('categoryName')) {
             $categoryName = $request->categoryName;
@@ -35,17 +39,31 @@ class UserIncomeController extends Controller
         }
 
         
-        $incomes = $incomes->paginate(5);
+        $incomes = $incomes->cursorPaginate(5);
         
 
         // Proveravamo da li su prihodi pronađeni
-        if ($incomes->isEmpty()) {
+        /*if ($incomes->isEmpty()) {
             return Response::json(['Incomes not found'], 404);
-        }
+        }*/
 
-        // Vraćamo prihode kao JSON
-        return new UserIncomeCollection($incomes);
+        // Vraćamo prihode kao JSON sa paginacijom
+        return $this->paginateIncomes($incomes);
+        //return new UserIncomeCollection($incomes);
     }
+
+
+    protected function paginateIncomes($incomes)
+{
+    // Priprema strukture odgovora za paginaciju
+    return response()->json([
+        'data' => new UserIncomeCollection($incomes),
+        'current_page' => $incomes->currentPage(),
+        'next_page_url' => $incomes->nextPageUrl(),
+        'prev_page_url' => $incomes->previousPageUrl(),
+        'total' => $incomes->total(),
+    ]);
+}
 
 
     public function store(Request $request)
@@ -86,6 +104,16 @@ class UserIncomeController extends Controller
 
 public function destroy(Income $income)
 {
+    $user = Auth::user();
+
+    $affected = DB::table('users')
+              ->where('id', $user->id)
+              ->decrement('budget', $income->incomeValue);
+
+    $affected = DB::table('users')
+            ->where('id', $user->id)
+            ->decrement('incomes_sum', $income->incomeValue);
+
     $income->delete();
 
     return Response::json(['message' => 'Income successfully deleted']);

@@ -26,6 +26,10 @@ class UserExpensesController extends Controller
 
         $expensesQuery = Expense::where('user_id', $user_id);
 
+        if ($expensesQuery->isEmpty()) {
+            return Response::json(['Expense not found']);
+        }
+
         // Dodaj logiku za filtriranje prema kategoriji
         if ($request->has('categoryName')) {
             $categoryName = $request->categoryName;
@@ -41,8 +45,21 @@ class UserExpensesController extends Controller
             return Response::json(['Expense not found'], 404);
         }
 
-        return new UserExpensesCollection($expenses);
+        return $this->paginateExpenses($expenses);
+        //return new UserExpensesCollection($expenses);
     }
+
+    protected function paginateExpenses($expenses)
+{
+    // Priprema strukture odgovora za paginaciju
+    return response()->json([
+        'data' => new UserExpensesCollection($expenses),
+        'current_page' => $expenses->currentPage(),
+        'next_page_url' => $expenses->nextPageUrl(),
+        'prev_page_url' => $expenses->previousPageUrl(),
+        'total' => $expenses->total(),
+    ]);
+}
 
     public function store(Request $request)
     {
@@ -85,6 +102,16 @@ class UserExpensesController extends Controller
 
     public function destroy(Expense $expense)
     {
+        $user = Auth::user();
+
+        $affected = DB::table('users')
+              ->where('id', $user->id)
+              ->increment('budget', $expense->expenseValue);
+
+        $affected = DB::table('users')
+            ->where('id', $user->id)
+            ->decrement('expenses_sum', $expense->expenseValue);
+
         $expense->delete();
 
         return Response::json(['message' => 'Expense successfully deleted']);

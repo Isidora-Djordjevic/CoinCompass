@@ -21,6 +21,11 @@ class UserChallengeController extends Controller
 
             // Ažuriranje statusa svih izazova
         $challenges = Challenge::where('userID', $user_id)->get();
+
+        if ($challenges->isEmpty()) {
+            return Response::json(['Challenge not found']);
+        }
+
         foreach ($challenges as $challenge) {
             $this->checkChallengeCompletion($challenge);
         }
@@ -36,15 +41,23 @@ class UserChallengeController extends Controller
             }
         }
 
-        $expenses = $challenges;
+       // $expenses = $challenges;
 
-       /* if ($expenses->isEmpty()) {
-            return Response::json(['Challenge not found']);
-        }*/
-
-        
-       return new ChallengeCollection($expenses);
+        return $this->paginateChallenges($challenges);
+       //return new ChallengeCollection($challenges);
     }
+
+    protected function paginateChallenges($challenges)
+{
+    // Priprema strukture odgovora za paginaciju
+    return response()->json([
+        'data' => new ChallengeCollection($challenges),
+        'current_page' => $challenges->currentPage(),
+        'next_page_url' => $challenges->nextPageUrl(),
+        'prev_page_url' => $challenges->previousPageUrl(),
+        'total' => $challenges->total(),
+    ]);
+}
 
     public function show($id)
     {
